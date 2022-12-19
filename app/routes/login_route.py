@@ -7,8 +7,8 @@ from sqlalchemy.orm import Session
 
 login = APIRouter()
 
-# user logging by post method
-@login.post("/loging")
+# user login by post method
+@login.post("/login")
 def login_user(request: Userinfo, db: Session = Depends(get_db)):
 
     # check whether user name is present in database or not
