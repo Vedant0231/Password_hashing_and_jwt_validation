@@ -25,8 +25,8 @@ def login_user(request: Userinfo, db: Session = Depends(get_db)):
 
         # compare logging password with hash password
         if verify_password(request.password, user_password):
-            access_token = create_access_token(user)
-            refresh_token = refresh_access_token(user)
+            access_token = create_access_token(user.name)
+            refresh_token = refresh_access_token(user.name)
 
             # returning token
             return {

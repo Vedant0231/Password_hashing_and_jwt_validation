@@ -1,6 +1,6 @@
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer, HTTPBearer, HTTPAuthorizationCredentials
-from fastapi import Depends, HTTPException, status, Request
+from fastapi import Depends, HTTPException, Request
 from dotenv import load_dotenv
 from time import time
 from app.models.models import Userauth
