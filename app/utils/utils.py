@@ -1,16 +1,12 @@
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer, HTTPBearer, HTTPAuthorizationCredentials
-from fastapi import Depends, HTTPException, Request
+from fastapi import HTTPException, Request
 from dotenv import load_dotenv
 from time import time
-from app.models.models import Userauth
 import os
-from pydantic import ValidationError
-from app.database.database import get_db
-from app.schemas.schema import Usersauth, TokenSchema, TokenPayload, Tokendata, Userindb
 from datetime import datetime, timedelta
 from typing import Union, Any
-from jose import jwt, JWTError
+from jose import jwt
 
 load_dotenv()
 
@@ -20,20 +16,20 @@ ALGORITHM = "HS256"
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")  # should be kept secret
 JWT_REFRESH_SECRET_KEY = os.getenv("JWT_REFRESH_SECRET_KEY")  # should be kept secret
 
-# bcrypt text
+"""bcrypt text"""
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# function to convert plain password into hash password
+"""function to convert plain password into hash password"""
 def password_hash(password: str) -> str:
     return password_context.hash(password)
 
 
-# compair logging password with hash password
+"""compair logging password with hash password"""
 def verify_password(password: str, hash_password: str) -> str:
     return password_context.verify(password, hash_password)
 
 
-# create tokens
+"""create tokens"""
 def create_access_token(subject: Union[str, Any], expire_delta: int = None) -> str:
 
     if expire_delta is not None:
@@ -49,7 +45,7 @@ def create_access_token(subject: Union[str, Any], expire_delta: int = None) -> s
     return encoded_jwt
 
 
-# refresh tokens
+"""refresh tokens"""
 def refresh_access_token(subject: Union[str, Any], expire_delta: int = None) -> str:
 
     if expire_delta is not None:
@@ -71,7 +67,7 @@ def decodeJWT(token: str) -> dict:
     except:
         return {}
 
-#secure router
+"""secure router"""
 class JWTBearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):
         super(JWTBearer, self).__init__(auto_error=auto_error)

@@ -8,7 +8,7 @@ from typing import List
 
 signup = APIRouter()
 
-# secure router for total users
+"""secure router for total users"""
 @signup.get("/alluser",dependencies=[Depends(JWTBearer())])
 def alluser(request: Request, db:Session = Depends(get_db)):
 
@@ -20,11 +20,11 @@ def alluser(request: Request, db:Session = Depends(get_db)):
     return db_users
 
 
-# user signup by post method
+"""user signup by post method"""
 @signup.post("/user_signup", response_model=Displayuser)
 def signupp(resquest: Usersauth, db: Session = Depends(get_db)):
 
-    # convert plain password with hash password
+    """convert plain password with hash password"""
     newuser = Userauth(id=resquest.id, name=resquest.name, password=password_hash(resquest.password))
     db.add(newuser)
     db.commit()
