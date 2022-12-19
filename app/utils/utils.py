@@ -1,9 +1,16 @@
 from passlib.context import CryptContext
+from fastapi.security import OAuth2PasswordBearer, HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import Depends, HTTPException, status, Request
 from dotenv import load_dotenv
+from time import time
+from app.models.models import Userauth
 import os
+from pydantic import ValidationError
+from app.database.database import get_db
+from app.schemas.schema import Usersauth, TokenSchema, TokenPayload, Tokendata, Userindb
 from datetime import datetime, timedelta
 from typing import Union, Any
-from jose import jwt
+from jose import jwt, JWTError
 
 load_dotenv()
 
@@ -56,3 +63,44 @@ def refresh_access_token(subject: Union[str, Any], expire_delta: int = None) -> 
     encoded_jwt = jwt.encode(to_encode, JWT_REFRESH_SECRET_KEY, ALGORITHM)
 
     return encoded_jwt
+
+def decodeJWT(token: str) -> dict:
+    try:
+        decoded_token = jwt.decode(token, JWT_SECRET_KEY, ALGORITHM)
+        return decoded_token
+    except:
+        return {}
+
+#secure router
+class JWTBearer(HTTPBearer):
+    def __init__(self, auto_error: bool = True):
+        super(JWTBearer, self).__init__(auto_error=auto_error)
+
+    async def __call__(self, request: Request):
+        credentials: HTTPAuthorizationCredentials = await super(JWTBearer, self).__call__(request)
+        if credentials:
+            print(credentials.credentials)
+            if not credentials.scheme == "Bearer":
+                raise HTTPException(status_code=403, detail="Invalid authentication scheme.")
+            if not self.verify_jwt(credentials.credentials):
+                raise HTTPException(status_code=403, detail="Invalid token or expired token.")
+            return credentials.credentials
+        else:
+            raise HTTPException(status_code=403, detail="Invalid authorization code.")
+
+    def verify_jwt(self, jwtoken: str) -> bool:
+        isTokenValid: bool = False
+        print(">>>>>>>>>>>.", jwtoken)
+        try:
+            payload = decodeJWT(jwtoken)
+            print(payload)
+        except:
+            payload = None
+        print(payload)
+        if payload:
+            isTokenValid = True
+        return isTokenValid
+
+reuseble_OAuth=OAuth2PasswordBearer(
+    tokenUrl= "/alluser",
+)

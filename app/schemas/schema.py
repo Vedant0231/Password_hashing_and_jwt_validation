@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from uuid import UUID
 
 # schema for your signup
 class Usersauth(BaseModel):
@@ -23,3 +24,23 @@ class Userinfo(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class TokenSchema(BaseModel):
+    access_token: str
+    refresh_token: str
+
+    class Config:
+        orm_mode = True
+
+
+class TokenPayload(BaseModel):
+    sub: UUID = None
+    exp: int = None
+
+
+class Tokendata(BaseModel):
+    name: str
+
+class Userindb(BaseModel):
+    hash_password: str

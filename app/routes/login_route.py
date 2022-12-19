@@ -5,11 +5,11 @@ from app.database.database import get_db
 from app.utils.utils import verify_password, create_access_token, refresh_access_token
 from sqlalchemy.orm import Session
 
-loging = APIRouter()
+login = APIRouter()
 
 # user logging by post method
-@loging.post("/loging")
-def loging_user(request: Userinfo, db: Session = Depends(get_db)):
+@login.post("/loging")
+def login_user(request: Userinfo, db: Session = Depends(get_db)):
 
     # check whether user name is present in database or not
     if not db.query(Userauth).filter(Userauth.name == request.name).count():
@@ -18,12 +18,12 @@ def loging_user(request: Userinfo, db: Session = Depends(get_db)):
             detail="Incorrect name or password",
         )
 
-    # if username is in the database , compair username and password
+    # if username is in the database , compare username and password
     else:
-        user = db.query(Userauth.password).filter(Userauth.name == request.name).first()
+        user = db.query(Userauth).filter(Userauth.name == request.name).first()
         user_password = user.password
 
-        # compair logging password with hash password
+        # compare logging password with hash password
         if verify_password(request.password, user_password):
             access_token = create_access_token(user)
             refresh_token = refresh_access_token(user)

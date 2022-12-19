@@ -2,9 +2,9 @@
 
 from fastapi import FastAPI
 from app.routes.Signup_route import signup
-from app.routes.loging_route import loging
+from app.routes.login_route import login
 
 app = FastAPI()
 
 app.include_router(signup)
-app.include_router(loging)
+app.include_router(login)
