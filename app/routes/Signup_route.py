@@ -24,7 +24,7 @@ def alluser(request: Request, db:Session = Depends(get_db)):
 @signup.post("/user_signup", response_model=Displayuser)
 def signupp(resquest: Usersauth, db: Session = Depends(get_db)):
 
-    """convert plain password with hash password"""
+    """convert plain password to hash password"""
     newuser = Userauth(id=resquest.id, name=resquest.name, password=password_hash(resquest.password))
     db.add(newuser)
     db.commit()

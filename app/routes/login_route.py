@@ -18,12 +18,11 @@ def login_user(request: Userinfo, db: Session = Depends(get_db)):
             detail="Incorrect name or password",
         )
 
-    #
     else:
         user = db.query(Userauth).filter(Userauth.name == request.name).first()
         user_password = user.password
 
-        """compare logging password with hash password"""
+        """compare login password with hash password"""
         if verify_password(request.password, user_password):
             access_token = create_access_token(user.name)
             refresh_token = refresh_access_token(user.name)
